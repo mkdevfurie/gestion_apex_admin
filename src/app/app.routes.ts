@@ -1,12 +1,20 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/auth';
 import { Shell } from './layout/shell';
 
 const placeholder = () => import('./pages/placeholder').then((m) => m.Placeholder);
 
 export const routes: Routes = [
   {
+    path: 'connexion',
+    title: 'Connexion · Apex Ledger',
+    loadComponent: () => import('./pages/login').then((m) => m.Login),
+  },
+  {
     path: '',
     component: Shell,
+    canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
     children: [
       {
         path: '',
