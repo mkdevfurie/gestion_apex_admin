@@ -87,6 +87,32 @@ const issuesToMap = (issues: readonly { path: PropertyKey[]; message: string }[]
               </div>
             </div>
 
+            <h3 class="mt-2 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">Crédit & facturation</h3>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="grid gap-1.5">
+                <label for="st-term" class="text-sm font-medium">Délai de paiement des factures (jours)</label>
+                <input id="st-term" inputmode="numeric" [class]="field + ' font-mono'" [value]="s().paymentTermDays" (input)="setS('paymentTermDays', $event)"
+                  [attr.aria-invalid]="sErr()['paymentTermDays'] ? true : null" />
+                <p class="text-xs text-muted-foreground">Fixe l’échéance des ventes à crédit ; au-delà, la créance est « échue ».</p>
+                @if (sErr()['paymentTermDays']; as e) { <p role="alert" class="text-xs text-destructive">{{ e }}</p> }
+              </div>
+              <div class="grid gap-1.5">
+                <label for="st-quote" class="text-sm font-medium">Validité des devis (jours)</label>
+                <input id="st-quote" inputmode="numeric" [class]="field + ' font-mono'" [value]="s().quoteValidityDays" (input)="setS('quoteValidityDays', $event)"
+                  [attr.aria-invalid]="sErr()['quoteValidityDays'] ? true : null" />
+                <p class="text-xs text-muted-foreground">Un devis expiré ne peut plus être converti en facture.</p>
+                @if (sErr()['quoteValidityDays']; as e) { <p role="alert" class="text-xs text-destructive">{{ e }}</p> }
+              </div>
+              <label class="flex items-start gap-3 sm:col-span-2">
+                <input type="checkbox" class="mt-0.5 size-4" [checked]="s().cashierCanSellOnCredit === 'true'"
+                  (change)="setFlag('cashierCanSellOnCredit', $event)" />
+                <span class="text-sm">
+                  <span class="font-medium">Les caissiers peuvent vendre à crédit</span>
+                  <span class="block text-xs text-muted-foreground">Toujours dans la limite du plafond de chaque client. Sinon, seuls gérants et administrateurs.</span>
+                </span>
+              </label>
+            </div>
+
             @if (sMsg(); as m) { <p role="status" class="text-sm" [class.text-success-soft-foreground]="m.ok" [class.text-destructive]="!m.ok">{{ m.text }}</p> }
             @if (canEdit()) {
               <div class="flex justify-end"><button type="submit" [class]="btnPrimary" [disabled]="saving()">Enregistrer les règles</button></div>
@@ -147,6 +173,7 @@ export class Settings {
 
   protected readonly s = signal<SettingsForm>({
     defaultVatRate: '18', defaultAlertThreshold: '', maxDiscountRate: '', cashDifferenceTolerance: '', minOpeningFloat: '', receiptFooter: '',
+    paymentTermDays: '30', quoteValidityDays: '15', cashierCanSellOnCredit: 'false',
   });
   protected readonly c = signal<CompanyForm>({ name: '', legalForm: '', ninea: '', rccm: '', address: '', phone: '', email: '' });
   protected readonly sErr = signal<Record<string, string>>({});
@@ -182,6 +209,11 @@ export class Settings {
     this.s.update((f) => ({ ...f, [key]: value }));
   }
 
+  protected setFlag(key: keyof AppSettings, e: Event) {
+    const value = String((e.target as HTMLInputElement).checked);
+    this.s.update((f) => ({ ...f, [key]: value }));
+  }
+
   protected setC(key: keyof CompanyInfo, e: Event) {
     const value = (e.target as HTMLInputElement).value;
     this.c.update((f) => ({ ...f, [key]: value }));
@@ -198,6 +230,9 @@ export class Settings {
       cashDifferenceTolerance: n(f.cashDifferenceTolerance),
       minOpeningFloat: n(f.minOpeningFloat),
       receiptFooter: f.receiptFooter,
+      paymentTermDays: n(f.paymentTermDays),
+      quoteValidityDays: n(f.quoteValidityDays),
+      cashierCanSellOnCredit: f.cashierCanSellOnCredit === 'true',
     });
     this.sMsg.set(null);
     if (!parsed.success) {

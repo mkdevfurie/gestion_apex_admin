@@ -24,6 +24,8 @@ const NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { path: '/ventes', label: 'Ventes', icon: 'receipt' },
       { path: '/caisses', label: 'Caisses', icon: 'wallet' },
+      { path: '/creances', label: 'Créances & dettes', icon: 'trending', permission: 'viewReports' },
+      { path: '/exports', label: 'Exports & contrôle', icon: 'audit', permission: 'viewReports' },
     ],
   },
   {

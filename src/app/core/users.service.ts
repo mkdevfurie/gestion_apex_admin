@@ -22,6 +22,10 @@ export class UsersApi {
     return firstValueFrom(this.http.patch<UserRow>(`${this.base}/${id}`, input));
   }
 
+  revokeSessions(id: string) {
+    return firstValueFrom(this.http.post<{ revoked: number }>(`${this.base}/${id}/revoke-sessions`, {}));
+  }
+
   resetPassword(id: string) {
     return firstValueFrom(this.http.post<TemporaryPasswordResponse>(`${this.base}/${id}/reset-password`, {}));
   }

@@ -112,6 +112,8 @@ const btn =
                           @if (u.active) {
                             <button type="button" (click)="reset(u)" [disabled]="busy() === u.id"
                               [class]="btn + ' h-8 border bg-background px-3 hover:bg-accent'">Réinitialiser</button>
+                            <button type="button" (click)="revoke(u)" [disabled]="busy() === u.id" title="Déconnecter tous les appareils (téléphone perdu, départ…)"
+                              [class]="btn + ' h-8 border bg-background px-3 hover:bg-accent'">Couper les sessions</button>
                             <button type="button" (click)="setActive(u, false)" [disabled]="busy() === u.id"
                               [class]="btn + ' h-8 border border-[#FCA5A5] bg-danger-soft px-3 text-destructive hover:bg-danger-soft/70'">Désactiver</button>
                           } @else {
@@ -305,6 +307,20 @@ export class Users {
       : `Désactiver le compte de ${u.name} ? La personne sera déconnectée immédiatement et ne pourra plus se connecter.`;
     if (!confirm(question)) return;
     await this.mutate(u, () => this.api.update(u.id, { active }));
+  }
+
+  protected async revoke(u: UserRow) {
+    if (!confirm(`Déconnecter ${u.name} de tous ses appareils ? Le compte reste actif ; la personne devra se reconnecter.`)) return;
+    this.busy.set(u.id);
+    this.error.set(null);
+    try {
+      const r = await this.api.revokeSessions(u.id);
+      alert(`${r.revoked} session(s) fermée(s) pour ${u.name}.`);
+    } catch (err) {
+      this.error.set(apiMessage(err));
+    } finally {
+      this.busy.set(null);
+    }
   }
 
   protected async reset(u: UserRow) {

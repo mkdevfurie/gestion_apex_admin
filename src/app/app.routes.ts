@@ -29,6 +29,8 @@ export const routes: Routes = [
       { path: 'activite', title: 'Journal d’activité · Apex Ledger', loadComponent: () => import('./pages/activity').then((m) => m.Activity) },
       { path: 'ventes', title: 'Ventes · Apex Ledger', loadComponent: () => import('./pages/sales').then((m) => m.Sales) },
       { path: 'caisses', title: 'Caisses · Apex Ledger', loadComponent: () => import('./pages/cash-sessions').then((m) => m.CashSessions) },
+      { path: 'creances', title: 'Créances & dettes · Apex Ledger', loadComponent: () => import('./pages/finances').then((m) => m.Finances) },
+      { path: 'exports', title: 'Exports · Apex Ledger', loadComponent: () => import('./pages/exports').then((m) => m.Exports) },
       { path: 'utilisateurs', title: 'Utilisateurs · Apex Ledger', loadComponent: () => import('./pages/users').then((m) => m.Users) },
       { path: 'depots', title: 'Dépôts · Apex Ledger', loadComponent: () => import('./pages/warehouses').then((m) => m.Warehouses) },
       { path: 'parametres', title: 'Paramètres · Apex Ledger', loadComponent: () => import('./pages/settings').then((m) => m.Settings) },
