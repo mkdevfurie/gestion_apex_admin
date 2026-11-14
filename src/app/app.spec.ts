@@ -24,7 +24,7 @@ describe('Shell', () => {
     await fixture.whenStable();
 
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelectorAll('nav a').length).toBe(5);
+    expect(el.querySelectorAll('nav a').length).toBe(8);
     expect(el.textContent).toContain('API & base OK');
   });
 

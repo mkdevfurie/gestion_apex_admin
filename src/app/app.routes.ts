@@ -2,8 +2,6 @@ import { Routes } from '@angular/router';
 import { adminGuard, passwordPageGuard } from './core/auth';
 import { Shell } from './layout/shell';
 
-const placeholder = () => import('./pages/placeholder').then((m) => m.Placeholder);
-
 export const routes: Routes = [
   {
     path: 'connexion',
@@ -27,14 +25,15 @@ export const routes: Routes = [
         title: "Vue d'ensemble · Apex Ledger",
         loadComponent: () => import('./pages/overview').then((m) => m.Overview),
       },
-      {
-        path: 'utilisateurs',
-        title: 'Utilisateurs · Apex Ledger',
-        loadComponent: () => import('./pages/users').then((m) => m.Users),
-      },
-      { path: 'depots', title: 'Dépôts · Apex Ledger', data: { title: 'Dépôts' }, loadComponent: placeholder },
-      { path: 'audit', title: "Journal d'audit · Apex Ledger", data: { title: "Journal d'audit" }, loadComponent: placeholder },
-      { path: 'societe', title: 'Société · Apex Ledger', data: { title: 'Société & paramètres' }, loadComponent: placeholder },
+      { path: 'equipe', title: 'Équipe · Apex Ledger', loadComponent: () => import('./pages/team').then((m) => m.Team) },
+      { path: 'activite', title: 'Journal d’activité · Apex Ledger', loadComponent: () => import('./pages/activity').then((m) => m.Activity) },
+      { path: 'ventes', title: 'Ventes · Apex Ledger', loadComponent: () => import('./pages/sales').then((m) => m.Sales) },
+      { path: 'caisses', title: 'Caisses · Apex Ledger', loadComponent: () => import('./pages/cash-sessions').then((m) => m.CashSessions) },
+      { path: 'utilisateurs', title: 'Utilisateurs · Apex Ledger', loadComponent: () => import('./pages/users').then((m) => m.Users) },
+      { path: 'depots', title: 'Dépôts · Apex Ledger', loadComponent: () => import('./pages/warehouses').then((m) => m.Warehouses) },
+      { path: 'parametres', title: 'Paramètres · Apex Ledger', loadComponent: () => import('./pages/settings').then((m) => m.Settings) },
+      { path: 'audit', redirectTo: 'activite' },
+      { path: 'societe', redirectTo: 'parametres' },
       { path: '**', redirectTo: '' },
     ],
   },
