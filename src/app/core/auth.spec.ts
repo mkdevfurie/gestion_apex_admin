@@ -10,7 +10,7 @@ import { SessionStore } from './session';
 const login = (role: LoginResponse['user']['role']): LoginResponse => ({
   token: 'jeton',
   expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
-  user: { id: 'u1', email: 'a@test.sn', name: 'Awa Diop', role },
+  user: { id: 'u1', email: 'a@test.sn', name: 'Awa Diop', role, mustChangePassword: false },
 });
 
 describe('authentification admin', () => {
@@ -40,6 +40,12 @@ describe('authentification admin', () => {
     expect(serialize(guard('/'))).toBe('/connexion?denied=1');
     TestBed.inject(SessionStore).set(login('STOCK_KEEPER'));
     expect(serialize(guard('/'))).toBe('/connexion?denied=1');
+  });
+
+  it('envoie vers le changement de mot de passe si le mot de passe est provisoire', () => {
+    const res = login('ADMIN');
+    TestBed.inject(SessionStore).set({ ...res, user: { ...res.user, mustChangePassword: true } });
+    expect(serialize(guard('/utilisateurs'))).toBe('/mot-de-passe');
   });
 
   it('laisse passer administrateur et gérant', () => {

@@ -174,6 +174,10 @@ export class Login {
         this.error.set(`Accès réservé aux administrateurs et aux gérants (votre rôle : ${roleLabels[res.user.role]}).`);
         return;
       }
+      if (res.user.mustChangePassword) {
+        await this.router.navigateByUrl('/mot-de-passe', { replaceUrl: true });
+        return;
+      }
       const target = this.redirect();
       const safe = target?.startsWith('/') && !target.startsWith('//') && !target.startsWith('/connexion') ? target : '/';
       await this.router.navigateByUrl(safe, { replaceUrl: true });

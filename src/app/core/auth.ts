@@ -36,6 +36,16 @@ export const adminGuard: CanActivateFn = (_route, state) => {
   if (!store.canAccessAdmin()) {
     return router.createUrlTree(['/connexion'], { queryParams: { denied: 1 } });
   }
+  if (store.user()?.mustChangePassword) return router.createUrlTree(['/mot-de-passe']);
+  return true;
+};
+
+/** Page de changement de mot de passe : connecté avec accès admin, provisoire ou non. */
+export const passwordPageGuard: CanActivateFn = () => {
+  const store = inject(SessionStore);
+  const router = inject(Router);
+  if (!store.user()) return router.createUrlTree(['/connexion']);
+  if (!store.canAccessAdmin()) return router.createUrlTree(['/connexion'], { queryParams: { denied: 1 } });
   return true;
 };
 

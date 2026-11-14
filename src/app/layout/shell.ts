@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { roleLabels, type AuthUser } from '../../shared/roles';
 import { API_BASE_URL } from '../core/api';
 import { AuthService } from '../core/auth';
@@ -70,7 +70,9 @@ const NAV: { path: string; label: string; icon: IconName }[] = [
               </div>
               <div class="min-w-0 flex-1 leading-tight">
                 <div class="truncate text-sm font-medium">{{ u.name }}</div>
-                <div class="truncate text-xs text-muted-foreground">{{ roleLabel() }}</div>
+                <a routerLink="/mot-de-passe" class="truncate text-xs text-muted-foreground underline-offset-2 hover:underline">
+                  {{ roleLabel() }} · mot de passe
+                </a>
               </div>
               <button type="button" (click)="logout()" aria-label="Se déconnecter" title="Se déconnecter"
                 class="grid size-8 place-items-center rounded-md text-muted-foreground hover:bg-sidebar-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none">
@@ -109,9 +111,17 @@ export class Shell {
 
   constructor() {
     // Le serveur fait foi : rôle modifié ou compte désactivé depuis la connexion.
+    const router = inject(Router);
     inject(HttpClient)
       .get<AuthUser>(`${inject(API_BASE_URL)}/auth/me`)
-      .subscribe({ next: (u) => this.store.updateUser(u), error: () => undefined });
+      .subscribe({
+        next: (u) => {
+          this.store.updateUser(u);
+          // Mot de passe réinitialisé entre-temps par un administrateur.
+          if (u.mustChangePassword) void router.navigateByUrl('/mot-de-passe');
+        },
+        error: () => undefined,
+      });
   }
 
   protected logout() {
